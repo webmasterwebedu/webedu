@@ -3,13 +3,17 @@ session_start();
 
 require_once 'conecta.php';
 
+// Função auxiliar para escapar output e prevenir XSS
+function escape_output($data) {
+    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+}
 
 ?>
 ﻿
 ﻿
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="estilo.css"/>
 <title>SHORT DESCRIPTION</title>
 </head>
@@ -27,7 +31,7 @@ require_once 'conecta.php';
   <label for="busca" > &nbsp;&nbsp;&nbsp;&nbsp;BUSCAR -  SHORT DESCRIPTION &nbsp;&nbsp;&nbsp;</label>
   <input type="text" name="busca" id="busca" >&nbsp;&nbsp;&nbsp;&nbsp;
   <button name="bt_busca" type="submit">OK</button> 
-  &nbsp;&nbsp;&nbsp;Palavra Buscada :  <?php print $_POST['busca']; ?>
+  &nbsp;&nbsp;&nbsp;Palavra Buscada :  <?php print isset($_POST['busca']) ? escape_output($_POST['busca']) : ''; ?>
 </form>
 <br />
 <br />
@@ -41,13 +45,19 @@ if(isset($_POST['bt_busca'])){
     
     $q = $_POST['busca'];
     
-    $vquery = "select * from short_tb where short_q like '%".$q."%' or short_d like '%".$q."%' order by short_q asc";
+    // Usar prepared statement para prevenir SQL Injection
+    $vquery = "select * from short_tb where short_q like ? or short_d like ? order by short_q asc";
+    $stmt = mysqli_prepare($conexao, $vquery);
+    if ($stmt) {
+        $search_term = '%' . $q . '%';
+        mysqli_stmt_bind_param($stmt, 'ss', $search_term, $search_term);
+        mysqli_stmt_execute($stmt);
+        $Lsql = mysqli_stmt_get_result($stmt);
+    } else {
+        die('Erro na consulta: ' . mysqli_error($conexao));
+    }
     
-    //print "<br />".$vquery;
-    //die;
 
-  
-$Lsql = mysqli_query($conexao, $vquery);
 
 $numRegistros = mysqli_num_rows($Lsql);
 
@@ -73,9 +83,9 @@ while($ListaTudo  = mysqli_fetch_array($Lsql)){
 	}
 	$conta = $conta + 1;
 	
-print "<tr><td ".$bk." width=\"30%\" align=\"center\">".$ListaTudo['short_d']."</td>
-		   <td ".$bk." width=\"30%\" align=\"center\">".$ListaTudo['short_q']."</td>
-		   <td ".$bk." width=\"30%\" align=\"center\">".$ListaTudo['service_off']."</td>  	</tr>";
+print "<tr><td ".$bk." width=\"30%\" align=\"center\">" . escape_output($ListaTudo['short_d']) . "</td>
+		   <td ".$bk." width=\"30%\" align=\"center\">" . escape_output($ListaTudo['short_q']) . "</td>
+		   <td ".$bk." width=\"30%\" align=\"center\">" . escape_output($ListaTudo['service_off']) . "</td></tr>";
 	}
 
 print "</table>";

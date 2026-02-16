@@ -10,8 +10,8 @@ $zero = "0";
 ?>
 
 <!DOCTYPE html>
-<html>
-<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html lang="pt-BR">
+<head><meta charset="utf-8">
 <title>Monitoramento Algar NOC - LDC</title>
 <link rel="stylesheet" type="text/css" href="estilo.css">
 <style type="text/css">
@@ -34,21 +34,7 @@ $zero = "0";
 	 
 	 
 	 
-	    var myVar = setInterval(myTimer ,1000);
-    function myTimer() {
-        var d = new Date(), displayDate;
-       if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-          displayDate = d.toLocaleTimeString('pt-BR');
-       } else {
-          displayDate = d.toLocaleTimeString('pt-BR', {timeZone: 'America/Belem'});
-       }
-          document.getElementById("demo").innerHTML = displayDate;
-    }
-
-
-
-
-   var myVar = setInterval(myTimer ,1000);
+	    var myVar = setInterval(myTimer, 1000);
     function myTimer() {
         var d = new Date(), displayDate;
        if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
