@@ -3,7 +3,7 @@
 $host = 'localhost';
 $user = 'user';
 $password = 'password';
-$database = 'webedu'; // Nome do banco de dados
+$database = 'db'; // Nome do banco de dados
 
 // Criar conexão
 $conexao = mysqli_connect($host, $user, $password, $database);
